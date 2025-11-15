@@ -1,6 +1,6 @@
-use std::io::{self, Write};
-use crate::types::{Square, Move, Piece, Color, PieceKind};
 use crate::game::Board;
+use crate::types::{Color, Move, Piece, PieceKind, Square};
+use std::io::{self, Write};
 
 pub struct UI;
 
@@ -84,19 +84,19 @@ impl UI {
 
     fn piece_char(piece: Piece) -> char {
         match (piece.color, piece.kind) {
-            (Color::White, PieceKind::Pawn)   => '♟',
-            (Color::White, PieceKind::Rook)   => '♜',
+            (Color::White, PieceKind::Pawn) => '♟',
+            (Color::White, PieceKind::Rook) => '♜',
             (Color::White, PieceKind::Knight) => '♞',
             (Color::White, PieceKind::Bishop) => '♝',
-            (Color::White, PieceKind::Queen)  => '♛',
-            (Color::White, PieceKind::King)   => '♚',
+            (Color::White, PieceKind::Queen) => '♛',
+            (Color::White, PieceKind::King) => '♚',
 
-            (Color::Black, PieceKind::Pawn)   => '♙',
-            (Color::Black, PieceKind::Rook)   => '♖',
+            (Color::Black, PieceKind::Pawn) => '♙',
+            (Color::Black, PieceKind::Rook) => '♖',
             (Color::Black, PieceKind::Knight) => '♘',
             (Color::Black, PieceKind::Bishop) => '♗',
-            (Color::Black, PieceKind::Queen)  => '♕',
-            (Color::Black, PieceKind::King)   => '♔',
+            (Color::Black, PieceKind::Queen) => '♕',
+            (Color::Black, PieceKind::King) => '♔',
         }
     }
 }

@@ -1,4 +1,4 @@
-use crate::types::{Color, Piece, PieceKind, Move, Square};
+use crate::types::{Color, Move, Piece, PieceKind, Square};
 
 pub struct Board {
     pub squares: [[Option<Piece>; 8]; 8],
@@ -19,18 +19,28 @@ impl Board {
         use Color::*;
         use PieceKind::*;
 
-        let back_rank = [
-            Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook
-        ];
+        let back_rank = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook];
 
         for (file, kind) in back_rank.iter().enumerate() {
-            board[0][file] = Some(Piece { kind: *kind, color: White });
-            board[1][file] = Some(Piece { kind: Pawn, color: White });
+            board[0][file] = Some(Piece {
+                kind: *kind,
+                color: White,
+            });
+            board[1][file] = Some(Piece {
+                kind: Pawn,
+                color: White,
+            });
         }
 
         for (file, kind) in back_rank.iter().enumerate() {
-            board[7][file] = Some(Piece { kind: *kind, color: Black });
-            board[6][file] = Some(Piece { kind: Pawn, color: Black });
+            board[7][file] = Some(Piece {
+                kind: *kind,
+                color: Black,
+            });
+            board[6][file] = Some(Piece {
+                kind: Pawn,
+                color: Black,
+            });
         }
 
         board
@@ -71,14 +81,13 @@ impl Board {
     }
 
     pub fn is_legal_move(&self, mv: Move) -> bool {
-
         if mv.from.0 > 7 || mv.from.1 > 7 || mv.to.0 > 7 || mv.to.1 > 7 {
             return false;
         }
 
         let piece = match self.get(mv.from) {
             Some(p) => p,
-            None => return false, 
+            None => return false,
         };
 
         if piece.color != self.turn {

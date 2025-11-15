@@ -1,5 +1,5 @@
-mod types;
 mod game;
+mod types;
 mod ui;
 
 use game::Board;
