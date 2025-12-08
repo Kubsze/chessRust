@@ -1,8 +1,11 @@
 use chess_rust::game::Board;
-use chess_rust::types::{Move, Square, Color};
+use chess_rust::types::{Color, Move, Square};
 
 fn mv(f1: u8, r1: u8, f2: u8, r2: u8) -> Move {
-    Move { from: Square(f1, r1), to: Square(f2, r2) }
+    Move {
+        from: Square(f1, r1),
+        to: Square(f2, r2),
+    }
 }
 
 #[test]

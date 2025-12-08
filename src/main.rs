@@ -1,12 +1,12 @@
+mod engine;
 mod game;
 mod types;
 mod ui;
-mod engine;
 
+use engine::Engine;
 use game::Board;
 use types::{Color, Move};
 use ui::UI;
-use engine::Engine;
 
 fn main() {
     println!("=== Terminal Chess ===");
@@ -41,11 +41,13 @@ fn main() {
         }
 
         let mv = if vs_engine && board.turn == Color::Black {
-            let engine_move = engine.as_mut().unwrap().bestMove(&move_list)
+            let engine_move = engine
+                .as_mut()
+                .unwrap()
+                .bestMove(&move_list)
                 .expect("Stockfish did not return move");
 
-            let parsed = UI::parseMove(&engine_move)
-                .expect("Engine returned invalid move");
+            let parsed = UI::parseMove(&engine_move).expect("Engine returned invalid move");
 
             println!("Stockfish plays: {}", engine_move);
             parsed

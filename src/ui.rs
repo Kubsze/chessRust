@@ -116,9 +116,9 @@ impl UI {
     }
 
     pub fn read_line() -> String {
-    let mut input = String::new();
-    std::io::stdin().read_line(&mut input).unwrap();
-    input
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input).unwrap();
+        input
     }
 
     pub fn move_to_string(m: Move) -> String {

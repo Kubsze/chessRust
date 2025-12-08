@@ -338,54 +338,68 @@ impl Board {
     }
 
     pub fn is_square_attacked(&self, sq: Square, by_color: Color) -> bool {
-    for y in 0..8 {
-        for x in 0..8 {
-            let from = Square(x as u8, y as u8);
-            if let Some(p) = self.get(from) {
-                if p.color != by_color { continue; }
+        for y in 0..8 {
+            for x in 0..8 {
+                let from = Square(x as u8, y as u8);
+                if let Some(p) = self.get(from) {
+                    if p.color != by_color {
+                        continue;
+                    }
 
-                let mv = Move { from, to: sq };
+                    let mv = Move { from, to: sq };
 
-                match p.kind {
-                    PieceKind::Pawn => {
-                        let dx = sq.0 as i8 - from.0 as i8;
-                        let dy = sq.1 as i8 - from.1 as i8;
-                        let forward = if by_color == Color::White { 1 } else { -1 };
-                        if dy == forward && dx.abs() == 1 { return true; }
-                    },
-                    PieceKind::Knight => {
-                        if self.legal_knight_move(mv) { return true; }
-                    },
-                    PieceKind::Bishop => {
-                        if (sq.0 as i8 - from.0 as i8).abs() == (sq.1 as i8 - from.1 as i8).abs() {
-                            if self.clear_diagonal(mv) { return true; }
+                    match p.kind {
+                        PieceKind::Pawn => {
+                            let dx = sq.0 as i8 - from.0 as i8;
+                            let dy = sq.1 as i8 - from.1 as i8;
+                            let forward = if by_color == Color::White { 1 } else { -1 };
+                            if dy == forward && dx.abs() == 1 {
+                                return true;
+                            }
                         }
-                    },
-                    PieceKind::Rook => {
-                        if sq.0 == from.0 || sq.1 == from.1 {
-                            if self.clear_straight(mv) { return true; }
+                        PieceKind::Knight => {
+                            if self.legal_knight_move(mv) {
+                                return true;
+                            }
                         }
-                    },
-                    PieceKind::Queen => {
-                        if (sq.0 == from.0 || sq.1 == from.1 && self.clear_straight(mv))
-                            || ((sq.0 as i8 - from.0 as i8).abs() == (sq.1 as i8 - from.1 as i8).abs() && self.clear_diagonal(mv))
-                        {
-                            return true;
+                        PieceKind::Bishop => {
+                            if (sq.0 as i8 - from.0 as i8).abs()
+                                == (sq.1 as i8 - from.1 as i8).abs()
+                            {
+                                if self.clear_diagonal(mv) {
+                                    return true;
+                                }
+                            }
                         }
-                    },
-                    PieceKind::King => {
-                        let dx = (sq.0 as i8 - from.0 as i8).abs();
-                        let dy = (sq.1 as i8 - from.1 as i8).abs();
-                        if dx <= 1 && dy <= 1 { return true; }
+                        PieceKind::Rook => {
+                            if sq.0 == from.0 || sq.1 == from.1 {
+                                if self.clear_straight(mv) {
+                                    return true;
+                                }
+                            }
+                        }
+                        PieceKind::Queen => {
+                            if (sq.0 == from.0 || sq.1 == from.1 && self.clear_straight(mv))
+                                || ((sq.0 as i8 - from.0 as i8).abs()
+                                    == (sq.1 as i8 - from.1 as i8).abs()
+                                    && self.clear_diagonal(mv))
+                            {
+                                return true;
+                            }
+                        }
+                        PieceKind::King => {
+                            let dx = (sq.0 as i8 - from.0 as i8).abs();
+                            let dy = (sq.1 as i8 - from.1 as i8).abs();
+                            if dx <= 1 && dy <= 1 {
+                                return true;
+                            }
+                        }
                     }
                 }
             }
         }
+        false
     }
-    false
-}
-
-
 
     //helpers
     fn legal_pawn_move(&self, color: Color, mv: Move) -> bool {
@@ -490,58 +504,56 @@ impl Board {
     }
 
     fn clear_straight(&self, mv: Move) -> bool {
-    let (x1, y1) = (mv.from.0 as i8, mv.from.1 as i8);
-    let (x2, y2) = (mv.to.0 as i8, mv.to.1 as i8);
+        let (x1, y1) = (mv.from.0 as i8, mv.from.1 as i8);
+        let (x2, y2) = (mv.to.0 as i8, mv.to.1 as i8);
 
-    let dx = (x2 - x1).signum();
-    let dy = (y2 - y1).signum();
+        let dx = (x2 - x1).signum();
+        let dy = (y2 - y1).signum();
 
-    let mut x = x1 + dx;
-    let mut y = y1 + dy;
+        let mut x = x1 + dx;
+        let mut y = y1 + dy;
 
-    loop {
-        if x == x2 && y == y2 {
-            break;
+        loop {
+            if x == x2 && y == y2 {
+                break;
+            }
+
+            if self.get(Square(x as u8, y as u8)).is_some() {
+                return false;
+            }
+
+            x += dx;
+            y += dy;
         }
 
-        if self.get(Square(x as u8, y as u8)).is_some() {
-            return false;
-        }
-
-        x += dx;
-        y += dy;
+        true
     }
-
-    true
-}
-
 
     fn clear_diagonal(&self, mv: Move) -> bool {
-    let (x1, y1) = (mv.from.0 as i8, mv.from.1 as i8);
-    let (x2, y2) = (mv.to.0 as i8, mv.to.1 as i8);
+        let (x1, y1) = (mv.from.0 as i8, mv.from.1 as i8);
+        let (x2, y2) = (mv.to.0 as i8, mv.to.1 as i8);
 
-    let dx = (x2 - x1).signum();
-    let dy = (y2 - y1).signum();
+        let dx = (x2 - x1).signum();
+        let dy = (y2 - y1).signum();
 
-    let mut x = x1 + dx;
-    let mut y = y1 + dy;
+        let mut x = x1 + dx;
+        let mut y = y1 + dy;
 
-    loop {
-        if x == x2 && y == y2 {
-            break;
+        loop {
+            if x == x2 && y == y2 {
+                break;
+            }
+
+            if self.get(Square(x as u8, y as u8)).is_some() {
+                return false;
+            }
+
+            x += dx;
+            y += dy;
         }
 
-        if self.get(Square(x as u8, y as u8)).is_some() {
-            return false;
-        }
-
-        x += dx;
-        y += dy;
+        true
     }
-
-    true
-}
-
 
     fn find_king(&self, color: Color) -> Option<Square> {
         for y in 0..8 {
