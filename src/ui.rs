@@ -5,6 +5,22 @@ use std::io::{self, Write};
 pub struct UI;
 
 impl UI {
+    pub fn readMode() -> u8 {
+        loop {
+            print!("Enter mode: ");
+            io::stdout().flush().unwrap();
+            let mut s = String::new();
+            io::stdin().read_line(&mut s).unwrap();
+            let s = s.trim();
+            if s == "1" {
+                return 1;
+            }
+            if s == "2" {
+                return 2;
+            }
+        }
+    }
+
     pub fn draw_board(board: &Board) {
         println!("\n    a   b   c   d   e   f   g   h");
         println!("  +---+---+---+---+---+---+---+---+");
@@ -32,8 +48,8 @@ impl UI {
         println!("Turn: {:?}\n", board.turn);
     }
 
-    pub fn read_move() -> Option<Move> {
-        print!("Enter move (e.g. e2e4, or 'q' to quit): ");
+    pub fn readMove() -> Option<Move> {
+        print!("Enter move: ");
         io::stdout().flush().unwrap();
 
         let mut input = String::new();
@@ -42,15 +58,14 @@ impl UI {
         }
 
         let input = input.trim().to_lowercase();
-
-        if input == "q" || input == "quit" {
+        if input == "q" {
             return None;
         }
 
-        Self::parse_move(&input)
+        Self::parseMove(&input)
     }
 
-    pub fn parse_move(text: &str) -> Option<Move> {
+    pub fn parseMove(text: &str) -> Option<Move> {
         if text.len() != 4 {
             return None;
         }
@@ -98,5 +113,19 @@ impl UI {
             (Color::Black, PieceKind::Queen) => '♕',
             (Color::Black, PieceKind::King) => '♔',
         }
+    }
+
+    pub fn read_line() -> String {
+    let mut input = String::new();
+    std::io::stdin().read_line(&mut input).unwrap();
+    input
+    }
+
+    pub fn move_to_string(m: Move) -> String {
+        let f1 = (m.from.0 + b'a') as char;
+        let r1 = (m.from.1 + b'1') as char;
+        let f2 = (m.to.0 + b'a') as char;
+        let r2 = (m.to.1 + b'1') as char;
+        format!("{}{}{}{}", f1, r1, f2, r2)
     }
 }
